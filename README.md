@@ -11,17 +11,30 @@ A Swagger UI plugin that displays the current schema as JSON Schema format with 
 
 ## Installation
 
-### Via NPM
+### Via GitHub Packages
 
+This package is published to GitHub Packages. To install it:
+
+1. Create or update your `.npmrc` file in your project root:
 ```bash
-npm install swagger-plugin-schema-json-viewer
+echo "@kbalderson:registry=https://npm.pkg.github.com" >> .npmrc
+```
+
+2. Authenticate with GitHub Packages (you'll need a GitHub Personal Access Token with `read:packages` permission):
+```bash
+npm login --registry=https://npm.pkg.github.com --scope=@kbalderson
+```
+
+3. Install the package:
+```bash
+npm install @kbalderson/swagger-plugin-schema-json-viewer
 ```
 
 ### Manual Installation
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/swagger-plugin-schema-json-viewer.git
+git clone https://github.com/KBalderson/swagger-plugin-schema-json-viewer.git
 cd swagger-plugin-schema-json-viewer
 ```
 
@@ -81,7 +94,7 @@ The compiled plugin will be in the `dist/` directory.
 ```javascript
 import SwaggerUI from 'swagger-ui-react';
 import 'swagger-ui-react/swagger-ui.css';
-import SwaggerPluginSchemaJsonViewer from 'swagger-plugin-schema-json-viewer';
+import SwaggerPluginSchemaJsonViewer from '@kbalderson/swagger-plugin-schema-json-viewer';
 
 function App() {
   return (
@@ -129,6 +142,29 @@ The plugin wraps Swagger UI's `Model` component and adds a JSON Schema viewer be
 - Firefox (latest)
 - Safari (latest)
 - Edge (latest)
+
+## Publishing
+
+This package is automatically published to GitHub Packages using GitHub Actions when:
+
+1. **Creating a release**: Create a new release on GitHub with a version tag (e.g., `v1.0.0`)
+2. **Pushing a version tag**: Push a tag starting with `v` (e.g., `git tag v1.0.1 && git push origin v1.0.1`)
+3. **Manual workflow dispatch**: Manually trigger the publish workflow from the Actions tab
+
+### Publishing a new version
+
+```bash
+# Update version in package.json
+npm version patch  # or minor, or major
+
+# Push the changes and tags
+git push && git push --tags
+
+# Or create a GitHub release
+gh release create v1.0.1 --title "Release v1.0.1" --notes "Release notes here"
+```
+
+The GitHub Actions workflow will automatically build and publish the package to GitHub Packages.
 
 ## License
 

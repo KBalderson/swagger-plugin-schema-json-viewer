@@ -1,12 +1,20 @@
 {
-  "name": "swagger-plugin-schema-json-viewer",
+  "name": "@kbalderson/swagger-plugin-schema-json-viewer",
   "version": "1.0.0",
   "description": "A Swagger UI plugin that displays the current schema as JSON Schema",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KBalderson/swagger-plugin-schema-json-viewer.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "build": "webpack --mode production",
     "dev": "webpack --mode development --watch",
-    "serve": "python3 -m http.server 8080"
+    "serve": "python3 -m http.server 8080",
+    "prepare": "npm run build"
   },
   "keywords": [
     "swagger",
