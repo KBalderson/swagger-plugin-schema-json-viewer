@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Swagger UI JSON Schema Viewer Plugin Demo</title>
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background-color: #1f1f1f;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    .header p {
+      margin: 10px 0 0 0;
+      font-family: Arial, sans-serif;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Swagger UI JSON Schema Viewer Plugin</h1>
+    <p>Expand any model below to see its JSON Schema representation</p>
+  </div>
+
+  <div id="swagger-ui"></div>
+
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+  <script src="../dist/index.js"></script>
+
+  <script>
+    window.onload = function() {
+      // Sample OpenAPI spec with various schema types
+      const spec = {
+        openapi: "3.0.0",
+        info: {
+          title: "Sample API",
+          version: "1.0.0",
+          description: "A sample API to demonstrate the JSON Schema Viewer Plugin"
+        },
+        paths: {
+          "/users": {
+            get: {
+              summary: "Get all users",
+              responses: {
+                "200": {
+                  description: "Successful response",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "array",
+                        items: {
+                          $ref: "#/components/schemas/User"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            post: {
+              summary: "Create a new user",
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      $ref: "#/components/schemas/NewUser"
+                    }
+                  }
+                }
+              },
+              responses: {
+                "201": {
+                  description: "User created",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/products": {
+            get: {
+              summary: "Get all products",
+              responses: {
+                "200": {
+                  description: "Successful response",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        $ref: "#/components/schemas/ProductList"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        components: {
+          schemas: {
+            User: {
+              type: "object",
+              required: ["id", "username", "email"],
+              properties: {
+                id: {
+                  type: "integer",
+                  format: "int64",
+                  description: "Unique user identifier"
+                },
+                username: {
+                  type: "string",
+                  minLength: 3,
+                  maxLength: 50,
+                  description: "User's username"
+                },
+                email: {
+                  type: "string",
+                  format: "email",
+                  description: "User's email address"
+                },
+                firstName: {
+                  type: "string",
+                  description: "User's first name"
+                },
+                lastName: {
+                  type: "string",
+                  description: "User's last name"
+                },
+                age: {
+                  type: "integer",
+                  minimum: 0,
+                  maximum: 150,
+                  description: "User's age"
+                },
+                createdAt: {
+                  type: "string",
+                  format: "date-time",
+                  description: "Account creation timestamp"
+                }
+              }
+            },
+            NewUser: {
+              type: "object",
+              required: ["username", "email", "password"],
+              properties: {
+                username: {
+                  type: "string",
+                  minLength: 3,
+                  maxLength: 50
+                },
+                email: {
+                  type: "string",
+                  format: "email"
+                },
+                password: {
+                  type: "string",
+                  format: "password",
+                  minLength: 8
+                },
+                firstName: {
+                  type: "string"
+                },
+                lastName: {
+                  type: "string"
+                }
+              }
+            },
+            Product: {
+              type: "object",
+              required: ["id", "name", "price"],
+              properties: {
+                id: {
+                  type: "integer",
+                  format: "int64"
+                },
+                name: {
+                  type: "string",
+                  description: "Product name"
+                },
+                description: {
+                  type: "string",
+                  description: "Product description"
+                },
+                price: {
+                  type: "number",
+                  format: "double",
+                  minimum: 0,
+                  description: "Product price"
+                },
+                category: {
+                  type: "string",
+                  enum: ["electronics", "clothing", "food", "books", "other"]
+                },
+                inStock: {
+                  type: "boolean",
+                  default: true
+                },
+                tags: {
+                  type: "array",
+                  items: {
+                    type: "string"
+                  }
+                }
+              }
+            },
+            ProductList: {
+              type: "object",
+              properties: {
+                total: {
+                  type: "integer",
+                  description: "Total number of products"
+                },
+                products: {
+                  type: "array",
+                  items: {
+                    $ref: "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          }
+        }
+      };
+
+      // Initialize Swagger UI with the plugin
+      SwaggerUIBundle({
+        spec: spec,
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        plugins: [
+          SwaggerUIBundle.plugins.DownloadUrl,
+          SwaggerPluginSchemaJsonViewer // Add the JSON Schema Viewer plugin
+        ],
+        layout: "StandaloneLayout"
+      });
+    };
+  </script>
+</body>
+</html>
